@@ -81,4 +81,24 @@ jobs:
         with:
           name: aleo-prover
           path: target/release/aleo-prover
+
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v2
+        with:
+          name: aleo-prover.exe
+          path: target/release/aleo-prover
+
+
+      - name: 'Upload Artifact win'
+        uses: actions/upload-artifact@v2
+        with:
+          name: aleo-prover.exe
+          path: target/release/aleo-prover/x86_64-pc-windows-msvc
+  
+
+      - name: 'Upload Artifact win'
+        uses: actions/upload-artifact@v2
+        with:
+          name: aleo-prover
+          path: target/release/aleo-prover/x86_64-pc-windows-msvc
   
