@@ -2,14 +2,14 @@ name: CI Build
 
 on:
   push:
-    branches: [ "testnet3_patched" ]
+    branches: [ "master" ]
   pull_request:
     types: [ opened, reopened, synchronize ]
 
 jobs:
   build_pool:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/testnet3_patched
+    if: github.ref == 'refs/heads/testnet3_patched'
     steps:
       - uses: actions/checkout@v2
 
@@ -23,7 +23,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push cpu image
         uses: docker/build-push-action@v3
         with:
           file: ./docker/Dockerfile

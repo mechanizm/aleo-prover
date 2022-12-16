@@ -10,6 +10,7 @@ WORKDIR /aleo_miner
 # LIBS
 # ========================
 RUN apt-get update -q
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
 RUN apt install -y make
 RUN apt install -y clang
 RUN apt install -y pkg-config
@@ -19,14 +20,17 @@ RUN apt install -y gcc
 RUN apt install -y xz-utils
 RUN apt install -y git
 RUN apt install -y curl
+RUN apt install -y wget
 RUN apt install -y jq
 RUN apt install -y llvm
-RUN apt upgrade
+
 RUN apt install -y apt-utils
 RUN apt-get install -y ufw
 RUN apt install -y nano
 RUN apt-get install -y python3
 RUN apt-get install -y iputils-ping
+
+RUN apt-get install -y software-properties-common
 
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain nightly
 
@@ -35,4 +39,5 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 
 COPY . /aleo_miner
 
-RUN cargo +nightly install -Z sparse-registry --debug --path .
+RUN cargo build --release
+

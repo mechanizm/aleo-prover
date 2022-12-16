@@ -15,7 +15,7 @@ services:
       - ./:/aleo_miner
     external_links:
       - aleo-pool-server_pool_1
-    command: bash -c "aleo-prover -p aleo-pool-server_pool_1:8080 -a ${ADDRESS}"
+    command: bash -c "aleo-prover -p aleo-pool-server_pool_1:4133 -a ${ADDRESS}"
 networks:
     aleo_node_aleo_airflow:
         external: true
