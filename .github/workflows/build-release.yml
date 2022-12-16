@@ -79,12 +79,6 @@ jobs:
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v2
         with:
-          name: aleo_prover
-          path: target/release/aleo_prover
-  
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v2
-        with:
           name: aleo-prover
-          path: target/release/aleo=prover
+          path: target/release/aleo-prover
   
