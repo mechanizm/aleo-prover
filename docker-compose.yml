@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  miner:
+    # image: "ghcr.io/mechanizm/aleo_miner:latest"
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+      target: base
+    environment:
+      ADDRESS: ${ADDRESS}
+    networks:
+      - aleo_node_aleo_airflow
+    volumes:
+      - ./:/aleo_miner
+    external_links:
+      - aleo-pool-server_pool_1
+    command: bash -c "aleo-prover -p aleo-pool-server_pool_1:8080 -a ${ADDRESS}"
+networks:
+    aleo_node_aleo_airflow:
+        external: true
