@@ -1,14 +1,9 @@
 name: Rust CI
 
 on:
-  pull_request:
-    paths-ignore:
-      - '**.md'
   push:
-    paths-ignore:
-      - '**.md'
-    branches:
-      - testnet3_patched
+    tags:
+      - "*"
 
 env:
   RUST_LOG: info
@@ -26,19 +21,31 @@ jobs:
         include:
           - os: ubuntu-20.04
             target: x86_64-unknown-linux-gnu
-          - os: windows-latest
-            target: x86_64-pc-windows-msvc
+            artifact_name: aleo-prover
+            asset_name: x86_64-unknown-linux-gnu
+            suffix: "20"
+          - os: ubuntu-18.04
+            target: x86_64-unknown-linux-gnu
+            artifact_name: aleo-prover
+            asset_name: x86_64-unknown-linux-gnu
+            suffix: "18"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Load Rust Cache
+        uses: Swatinem/rust-cache@v1
+
       - name: Install CUDA 
-        uses: Jimver/cuda-toolkit@v0.2.4
+        uses: Jimver/cuda-toolkit@v0.2.8
         id: cuda-toolkit
         with:
           cuda: '11.2.2'
 
       # random command that forces rustup to install stuff in rust-toolchain
+      - name: add target
+        run: rustup target add ${{ matrix.asset_name }}
+
       - name: Install rust-toolchain
         run: cargo version
         
@@ -51,54 +58,24 @@ jobs:
             sudo apt-get install llvm-7
             sudo ln -s /usr/bin/llvm-config-7 /usr/local/bin/llvm-config
 
-      - name: Load Rust Cache
-        uses: Swatinem/rust-cache@v1
-
       - name: Rustfmt
         if: contains(matrix.os, 'ubuntu')
         run: cargo fmt --all -- --check
 
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+
       - name: Build
-        run: cargo build --all-features --release
+        run: cargo build --all-features --release --target ${{ matrix.asset_name }}
 
-      # Don't currently test because many tests rely on the system having a CUDA GPU
-      # - name: Test
-      #   run: cargo test --workspace
-
-      # - name: Clippy
-      #   if: contains(matrix.os, 'ubuntu')
-      #   env:
-      #     RUSTFLAGS: -Dwarnings
-      #   run: cargo clippy 
-
-      # - name: Check documentation
-      #   env:
-      #     RUSTDOCFLAGS: -Dwarnings
-      #   run: cargo doc --workspace --all-features 
-
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v2
+      - name: Upload binary to release
+        uses: svenstaro/upload-release-action@v1-release
         with:
-          name: aleo-prover
-          path: target/release/aleo-prover
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: target/${{ matrix.asset_name }}/release/${{ matrix.artifact_name }}
+          asset_name: ${{ matrix.suffix }}${{ matrix.artifact_name }}
+          tag: ${{ github.ref }}
+          overwrite: true
 
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v2
-        with:
-          name: aleo-prover.exe
-          path: target/release/aleo-prover
-
-
-      # - name: 'Upload Artifact win'
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: aleo-prover.exe
-      #     path: target/release/aleo-prover/x86_64-pc-windows-msvc
-  
-
-      # - name: 'Upload Artifact win'
-      #   uses: actions/upload-artifact@v2
-      #   with:
-      #     name: aleo-prover
-      #     path: target/release/aleo-prover/x86_64-pc-windows-msvc
   
