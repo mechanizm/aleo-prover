@@ -25,9 +25,9 @@ jobs:
             asset_name: x86_64-unknown-linux-gnu
             suffix: "20"
           - os: ubuntu-18.04
-            target: x86_64-unknown-linux-gnu
+            target: x86_64-unknown-linux-musl
             artifact_name: aleo-prover
-            asset_name: x86_64-unknown-linux-gnu
+            asset_name: x86_64-unknown-linux-musl
             suffix: "18"
     steps:
       - name: Checkout repository
@@ -40,7 +40,7 @@ jobs:
         uses: Jimver/cuda-toolkit@v0.2.8
         id: cuda-toolkit
         with:
-          cuda: '11.2.2'
+          cuda: '11.7'
 
       # random command that forces rustup to install stuff in rust-toolchain
       - name: add target
